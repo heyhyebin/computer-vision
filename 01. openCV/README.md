@@ -5,7 +5,7 @@
 <img width="1373" height="770" alt="image" src="https://github.com/user-attachments/assets/bcfc507a-3a5b-4079-af09-810b738a975c" />
 
 ### 코드              
-grayscal.py
+01.grayscal.py
 ```python
 import cv2 as cv    # OpenCV 라이브러리를 cv라는 이름으로 불러오기
 import sys  # 프로그램 종료를 위해 sys 모듈 사용
@@ -50,7 +50,7 @@ cv.destroyAllWindows()
 
 
 ### 코드  
-drawing.py
+02.drawing.py
 ```python
 import cv2 as cv    # OpenCV 라이브러리를 cv라는 이름으로 불러오기
 import sys  # 프로그램 종료를 위해 sys 모듈 사용
@@ -110,7 +110,7 @@ cv.destroyAllWindows()
 <img width="1374" height="771" alt="image" src="https://github.com/user-attachments/assets/27e213e7-f575-4ec4-b65d-fec839cde093" />
 
 ### 코드
-shape.py      
+03.shape.py      
       
 ```python
 import cv2 as cv    # OpenCV 라이브러리를 cv라는 이름으로 불러오기
