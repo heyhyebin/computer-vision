@@ -114,47 +114,62 @@ cv.destroyAllWindows()
       
 ```python
 import cv2 as cv    # OpenCV 라이브러리를 cv라는 이름으로 불러오기
-import sys  # 프로그램 종료를 위해 sys 모듈 사용
+import sys          # 프로그램 종료를 위해 sys 모듈 사용
 
 img = cv.imread('girl_laughing.jpg')    # 이미지 읽기
-# 이미지 파일이 없을 경우
-if img is None:
-  sys.exit('파일이 존재하지 않습니다.')
+if img is None:                         # 이미지 파일이 없을 경우
+    sys.exit('파일이 존재하지 않습니다.')
 
 clone = img.copy()  # 원본 이미지를 복사해서 clone에 저장 (원본 보존용)
 
-x1, y1 = -1, -1 # 드래그할 마우스 초기 위치
-roi = None
+drawing = False
+x1, y1 = -1, -1     # 드래그 시작 좌표
+roi = None          # 선택된 ROI 저장용
 
-def select_roi(event, x, y, flags, param):  # 콜백 함수
-    global x1, y1, img, clone, roi
+def select_roi(event, x, y, flags, param):
+    global x1, y1, drawing, img, clone, roi
 
-    if event == cv.EVENT_LBUTTONDOWN:   # 왼쪽 마우스를 눌렸을 때
-        x1, y1 = x, y   # 드래그 시작 좌표
+    if event == cv.EVENT_LBUTTONDOWN:   # 마우스 왼쪽 버튼 누름: 드래그 시작
+        drawing = True
+        x1, y1 = x, y
 
-    elif event == cv.EVENT_LBUTTONUP:   # 왼쪽 마우스 드래그 했을 때
-        cv.rectangle(img, (x1,y1), (x,y), (0,255,0), 2) # 사각형 그리기
+    elif event == cv.EVENT_MOUSEMOVE and drawing:
+        # 2) 드래그 중(마우스 이동): 사각형이 실시간으로 보이도록 계속 갱신
+        img = clone.copy()  # ★ 매번 원본으로 되돌린 뒤
+        cv.rectangle(img, (x1, y1), (x, y), (0, 255, 0), 2)  # ★ 현재 마우스 위치까지 임시 사각형
 
-        # ROI 영역 추출 (numpy 슬라이싱)
-        # y좌표 먼저, x좌표 
-        roi = clone[y1:y, x1:x]
-        cv.imshow("ROI", roi)
+    elif event == cv.EVENT_LBUTTONUP:   # 마우스 버튼 뗌: 최종 ROI 확정
+        drawing = False
+
+        # 드래그 방향이 반대여도 ROI가 정상 나오도록 좌표 정렬
+        x_min, x_max = min(x1, x), max(x1, x)
+        y_min, y_max = min(y1, y), max(y1, y)
+
+        img = clone.copy()  # 최종 사각형도 깔끔하게 표시되도록 원본에서 다시 그림
+        cv.rectangle(img, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+
+        # ROI 영역 추출 (numpy 슬라이싱: [y범위, x범위])
+        roi = clone[y_min:y_max, x_min:x_max]
+
+        # ROI가 비어있지 않을 때만 띄우기
+        if roi.size > 0:
+            cv.imshow("ROI", roi)
 
 cv.namedWindow("image")
 cv.setMouseCallback("image", select_roi)
 
 while True:
-
     cv.imshow("image", img)
     key = cv.waitKey(1) & 0xFF
 
     if key == ord('r'):     # r 입력한 경우 초기화
         img = clone.copy()
+        roi = None          # ROI도 같이 초기화
 
     elif key == ord('s') and roi is not None:   # s 입력한 경우 지정된 영역 저장
         cv.imwrite("roi.png", roi)
 
-    elif key == ord('q'):   # 창 종료
+    elif key == ord('q'):   # q 입력 시 종료
         break
 
 cv.destroyAllWindows()
@@ -167,7 +182,10 @@ cv.destroyAllWindows()
     • roi = clone[y1:y, x1:x] : NumPy 슬라이싱을 이용하여 ROI 영역 추출
     • cv.imshow("ROI", roi) : 선택한 ROI 영역을 새로운 창에 출력
     • cv.imwrite("roi.png", roi) : 선택한 ROI 영역을 이미지 파일로 저장
-
+    • drawing = True/False : 드래그 상태를 저장하여 ROI 선택 과정 제어
+    • cv.setMouseCallback("image", select_roi) : 마우스 이벤트를 콜백 함수로 연결
+    • img = clone.copy() : 드래그 중 사각형 잔상 방지를 위해 원본으로 초기화 후 재그리기
+    • key = cv.waitKey(1) & 0xFF : 키 입력 처리(r: 초기화, s: 저장, q: 종료)
 ### 실행결과
 <img width="2856" height="1797" alt="image" src="https://github.com/user-attachments/assets/930e24a6-5786-4ba3-878b-3a43a4646f7a" />
 
