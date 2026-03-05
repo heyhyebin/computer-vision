@@ -169,4 +169,5 @@ cv.destroyAllWindows()
     • cv.imwrite("roi.png", roi) : 선택한 ROI 영역을 이미지 파일로 저장
 
 ### 실행결과
-<img width="2879" height="1699" alt="스크린샷 2026-03-05 144713" src="https://github.com/user-attachments/assets/bce7a51c-e70f-415a-bb8d-8a439b9978fc" />
+<img width="2856" height="1797" alt="image" src="https://github.com/user-attachments/assets/930e24a6-5786-4ba3-878b-3a43a4646f7a" />
+
