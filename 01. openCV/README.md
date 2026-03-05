@@ -35,37 +35,11 @@ cv.destroyAllWindows()
 
 
 ### 핵심 코드 설명
-
-1. 이미지 읽기  
-```python
-img = cv.imread('girl_laughing.jpg')
-```
-  OpenCV의 imread() 함수를 사용하여 이미지를 불러온다.
-
-2. 이미지 크기 축소  
-```python
-img_small = cv.resize(img, dsize=(0,0), fx=0.5, fy=0.5)  
-```
-  resize() 함수를 이용하여 이미지 크기를 절반으로 줄인다.    
-      • fx : 가로 크기 비율  
-      • fy : 세로 크기 비율
-
-3. 그레이스케일 변환
-```python
-  gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-```
-4. 채널 수 맞추기
-```python
-  gray_3 = cv.cvtColor(gray_small, cv.COLOR_GRAY2BGR)
-```
-  np.hstack()으로 이미지를 붙이기 위해서는 이미지 채널 수가 같아야 한다.  
-    • 컬러 이미지 → 3채널  
-    • 그레이스케일 → 1채널
-
-5. 이미지 가로로 붙이기
-```python
-  result = np.hstack((img_small, gray_3))
-```
+  
+    • img_small = cv.resize(img, dsize=(0,0), fx=0.5, fy=0.5) : 이미지 크기 축소(fx : 가로 크기 비율, fy : 세로 크기 비율)  
+    • gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY) : 그레이스케일 변환  
+    • gray_3 = cv.cvtColor(gray_small, cv.COLOR_GRAY2BGR) : 채널 수 맞추기  
+    • result = np.hstack((img_small, gray_3)) : 이미지 가로로 붙이기  
 
 ### 실행결과
 <img width="2790" height="1024" alt="스크린샷 2026-03-05 144327" src="https://github.com/user-attachments/assets/f71de083-4d1d-4082-83e3-5cd2d9a56eca" />
@@ -121,31 +95,11 @@ cv.destroyAllWindows()
 
 
 ### 핵심 코드 설명
-1. 좌클릭으로 파란색 그림 그리기
-```python
-   if event == cv.EVENT_LBUTTONDOWN or (event == cv.EVENT_MOUSEMOVE and flags == cv.EVENT_FLAG_LBUTTON):
-    cv.circle(img, (x,y), brush_size, (255,0,0), -1)
-```
-왼쪽 마우스를 누르거나 누른 상태에서 움직이면 파란색 원을 그린다.
-cv.circle(이미지, 중심좌표, 반지름, 색상, 두께)
-    • (x,y) : 마우스 위치
-    • brush_size : 원의 크기
-    • (255,0,0) : 파란색 (BGR)
-    • -1 : 내부를 채운 원
-
-2. 키보드 입력 처리
-```python
-key = cv.waitKey(1) & 0xFF
-```
-키보드 입력을 확인하기 위한 코드이다.
-
-3. 붓 크기 증가  
-```python
-if key == ord('+'):
-    brush_size = min(15, brush_size+1)
-```
-  + 키를 누르면 붓 크기가 증가한다.
-  최대 크기는 15로 제한된다.
+    • cv.setMouseCallback("Paint", draw) : 마우스 이벤트 발생 시 draw 함수 실행  
+    • cv.circle(img, (x,y), brush_size, (255,0,0), -1) : 지정 위치에 원을 그려 그림 그리기 (brush_size : 붓 크기, (255,0,0) : 파란색)  
+    • brush_size = min(15, brush_size+1) : 붓 크기 증가 (최대 15 제한)  
+    • brush_size = max(1, brush_size-1) : 붓 크기 감소 (최소 1 제한)  
+    • key = cv.waitKey(1) & 0xFF : 키보드 입력 확인  
 
 ### 실행결과
 <img width="2866" height="1800" alt="스크린샷 2026-03-05 144502" src="https://github.com/user-attachments/assets/9d1a887a-7c29-4490-9e15-d652e5d6dafe" />
@@ -207,48 +161,12 @@ cv.destroyAllWindows()
 ```
 
 ### 핵심 코드 설명
-1. 원본 이미지 복사
-```python
-clone = img.copy()
-```
-이미지의 원본을 보존하기 위해 복사본을 생성한다.
-ROI를 선택하거나 그림을 그릴 때 원본 이미지를 유지하기 위해 사용한다.
-
-2. 드래그 시작 좌표 저장
-```python
-if event == cv.EVENT_LBUTTONDOWN:
-    x1, y1 = x, y
-```
-왼쪽 마우스를 누르면 ROI 선택의 시작 좌표를 저장한다.
-
-3. 사각형 그리기
-```python
-elif event == cv.EVENT_LBUTTONUP:
-    cv.rectangle(img, (x1,y1), (x,y), (0,255,0), 2)
-```
-마우스를 떼면 시작 좌표 (x1,y1)와 현재 좌표 (x,y)를 이용해 이미지 위에 사각형을 그린다.
-
-cv.rectangle(이미지, 시작좌표, 끝좌표, 색상, 두께)
-
-4. ROI 영역 추출
-```python
-roi = clone[y1:y, x1:x]
-```
-ROI는 Region Of Interest로, 이미지에서 관심 영역을 의미한다.
-OpenCV 이미지는 NumPy 배열이기 때문에 슬라이싱을 사용하여 영역을 추출할 수 있다.
-      • 이미지[y좌표, x좌표]
-
-5. 선택된 영역 출력
-```python
-cv.imshow("ROI", roi)
-```
-선택된 ROI 영역을 새로운 창에 출력한다.
-6. 키 (ROI 저장)
-```python
-elif key == ord('s') and roi is not None:
-    cv.imwrite("roi.png", roi)
-```
-선택된 ROI 영역을 파일로 저장한다.
+    • clone = img.copy() : 원본 이미지 보존을 위해 복사본 생성
+    • x1, y1 = x, y : ROI 선택 시작 좌표 저장
+    • cv.rectangle(img, (x1,y1), (x,y), (0,255,0), 2) : 드래그한 영역에 사각형 표시
+    • roi = clone[y1:y, x1:x] : NumPy 슬라이싱을 이용하여 ROI 영역 추출
+    • cv.imshow("ROI", roi) : 선택한 ROI 영역을 새로운 창에 출력
+    • cv.imwrite("roi.png", roi) : 선택한 ROI 영역을 이미지 파일로 저장
 
 ### 실행결과
 <img width="2879" height="1699" alt="스크린샷 2026-03-05 144713" src="https://github.com/user-attachments/assets/bce7a51c-e70f-415a-bb8d-8a439b9978fc" />
