@@ -236,7 +236,7 @@ roi = clone[y1:y, x1:x]
 ```
 ROI는 Region Of Interest로, 이미지에서 관심 영역을 의미한다.
 OpenCV 이미지는 NumPy 배열이기 때문에 슬라이싱을 사용하여 영역을 추출할 수 있다.
-이미지[y좌표, x좌표]
+      • 이미지[y좌표, x좌표]
 
 5. 선택된 영역 출력
 ```python
