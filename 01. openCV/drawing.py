@@ -1,5 +1,5 @@
-import cv2 as cv
-import sys
+import cv2 as cv    # OpenCV 라이브러리를 cv라는 이름으로 불러오기
+import sys  # 프로그램 종료를 위해 sys 모듈 사용
 import numpy as np
 
 img = cv.imread('girl_laughing.jpg')    # 이미지 읽기
