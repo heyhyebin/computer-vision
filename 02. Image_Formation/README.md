@@ -460,3 +460,5 @@ cv2.destroyAllWindows()
 
 ### 실행결과
 <img width="1775" height="1611" alt="image" src="https://github.com/user-attachments/assets/22e5edc3-cdb9-4c13-80e1-5bee58dae88b" />
+<img width="948" height="514" alt="image" src="https://github.com/user-attachments/assets/1295c65e-7103-430d-91a2-09a9aca248a1" />
+
