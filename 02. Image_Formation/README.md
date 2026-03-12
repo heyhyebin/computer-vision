@@ -1,4 +1,4 @@
-# 2주
+# 2주차
 
 ## 01. 체크보드 기반 카메라 캘리브레이션
 ### 문제
@@ -15,7 +15,8 @@
 • 실제 좌표는 모든 이미지에서 동일한 격자 구조를 가짐(한칸의실제크기: 25mm)
 • 체크보드는 평면 패턴이며 코너 검출에 실패한 이미지는 캘리브레이션에서 제외 가능
 
-## 코드
+### 코드
+01.Calibration.py
 ```python
 import cv2
 import numpy as np
@@ -119,7 +120,7 @@ cv2.destroyAllWindows()
 
 ```
 
-## 핵심 코드 설명
+### 핵심 코드 설명
 
     • ret, corners = cv2.findChessboardCorners(gray, CHECKERBOARD, None) : 체크보드 패턴에서 내부 코너 위치를 검출
     • corners2 = cv2.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria) : 검출된 코너 위치를 더 정확하게 보정
@@ -128,7 +129,7 @@ cv2.destroyAllWindows()
     • newK, roi = cv2.getOptimalNewCameraMatrix(K, dist, (w, h), 1, (w, h)) : 왜곡 보정 후 사용할 최적의 새 카메라 행렬 계산
     • undistorted = cv2.undistort(img, K, dist, None, newK) : 계산된 카메라 파라미터를 이용해 이미지 렌즈 왜곡 보정
 
-## 실행결과
+### 실행결과
 <img width="2531" height="1011" alt="image" src="https://github.com/user-attachments/assets/292e6918-e3fd-489e-a698-0f86c307cf4b" />
 <img width="986" height="268" alt="image" src="https://github.com/user-attachments/assets/f8a7f5da-f9c0-4b2a-b25a-b94d7048eaaa" />
 
@@ -147,7 +148,8 @@ cv2.destroyAllWindows()
 • 회전, 크기 조절, 평행이동은 cv2.warpAffine()로 적용
 • 평행이동은 회전 행렬의 마지막 열 값을 조정하는 방식으로 반영
 
-## 코드
+### 코드
+02.AffineTransform.py
 ```python
 import cv2
 
@@ -182,7 +184,7 @@ cv2.waitKey()
 cv2.destroyAllWindows()
 ```
 
-## 핵심 코드 설명
+### 핵심 코드 설명
 
     • h, w = img.shape[:2] : 입력 이미지의 높이와 너비 추출
     • center = (w // 2, h // 2) : 회전 기준이 될 이미지 중심 좌표 계산
@@ -193,7 +195,7 @@ cv2.destroyAllWindows()
 
 
 
-## 실행결과
+### 실행결과
 <img width="2357" height="1578" alt="image" src="https://github.com/user-attachments/assets/7f43232d-28c3-45ef-92fc-b2b285884bb4" />
 
 
@@ -213,7 +215,9 @@ cv2.destroyAllWindows()
 • Disparity가 클 수록 물체는 더 가까움
 • Depth는 𝑍=𝑓𝐵/𝑑로 계산 가능 
 • Disparity map의 결과는 시각화하기 전에 정규화가 필요할 수 있음
-## 코드
+
+### 코드
+03.Depth.py
 ```python
 import cv2
 import numpy as np
@@ -422,7 +426,7 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 ```
 
-## 핵심 코드 설명
+### 핵심 코드 설명
 
     • left_gray = cv2.cvtColor(left_color, cv2.COLOR_BGR2GRAY) : 왼쪽 컬러 이미지를 disparity 계산을 위해 그레이스케일 이미지로 변환
     • right_gray = cv2.cvtColor(right_color, cv2.COLOR_BGR2GRAY) : 오른쪽 컬러 이미지를 그레이스케일 이미지로 변환
@@ -435,5 +439,5 @@ cv2.destroyAllWindows()
     • disparity_color = cv2.applyColorMap(disp_vis, cv2.COLORMAP_JET) : disparity map을 컬러맵으로 시각화
     • depth_color = cv2.applyColorMap(depth_vis, cv2.COLORMAP_JET) : depth map을 컬러맵으로 시각화
 
-## 실행결과
+### 실행결과
 <img width="889" height="744" alt="image" src="https://github.com/user-attachments/assets/a5b2682c-900c-44b1-9fb9-38b1c43646e6" />
