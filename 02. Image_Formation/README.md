@@ -459,4 +459,4 @@ cv2.destroyAllWindows()
     • depth_color = cv2.applyColorMap(depth_vis, cv2.COLORMAP_JET) : depth map을 컬러맵으로 시각화
 
 ### 실행결과
-<img width="889" height="744" alt="image" src="https://github.com/user-attachments/assets/a5b2682c-900c-44b1-9fb9-38b1c43646e6" />
+<img width="1775" height="1611" alt="image" src="https://github.com/user-attachments/assets/22e5edc3-cdb9-4c13-80e1-5bee58dae88b" />
