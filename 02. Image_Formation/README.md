@@ -121,13 +121,18 @@ cv2.destroyAllWindows()
 
 ## 핵심 코드 설명
 
-      • objp[:, :2] = np.mgrid[0:CHECKERBOARD[0], 0:CHECKERBOARD[1]].T.reshape(-1, 2) : 체크보드의 실제 3차원 좌표 중 x, y 좌표를 격자 형태로 생성
-      • ret, corners = cv2.findChessboardCorners(gray, CHECKERBOARD, None) : 체크보드 내부 코너 검출
-      • corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria) : 검출한 코너 위치를 더 정확하게 보정
-      • ret, K, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, img_size, None, None) : 카메라 내부 행렬과 왜곡 계수 계산
-      • undistorted = cv2.undistort(img, K, dist, None, newK) : 계산한 파라미터를 이용해 렌즈 왜곡 보정
-      • newK, roi = cv2.getOptimalNewCameraMatrix(K, dist, (w, h), 1, (w, h)) : 왜곡 보정 후 사용할 최적의 새 카메라 행렬 계산
+    • ret, corners = cv2.findChessboardCorners(gray, CHECKERBOARD, None) : 체크보드 패턴에서 내부 코너 위치를 검출
+    • corners2 = cv2.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria) : 검출된 코너 위치를 더 정확하게 보정
+    • cv2.drawChessboardCorners(img, CHECKERBOARD, corners2, ret) : 검출된 체크보드 코너를 이미지 위에 시각화
+    • ret, K, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, img_size, None, None) : 실제 좌표와 이미지 좌표를 이용해 카메라 내부 행렬(K)과 왜곡 계수(dist) 계산
+    • newK, roi = cv2.getOptimalNewCameraMatrix(K, dist, (w, h), 1, (w, h)) : 왜곡 보정 후 사용할 최적의 새 카메라 행렬 계산
+    • undistorted = cv2.undistort(img, K, dist, None, newK) : 계산된 카메라 파라미터를 이용해 이미지 렌즈 왜곡 보정
+
 ## 실행결과
+<img width="2531" height="1011" alt="image" src="https://github.com/user-attachments/assets/292e6918-e3fd-489e-a698-0f86c307cf4b" />
+<img width="986" height="268" alt="image" src="https://github.com/user-attachments/assets/f8a7f5da-f9c0-4b2a-b25a-b94d7048eaaa" />
+
+
 
 ## 02. 이미지 Rotation & Transformation
 ### 문제
@@ -178,6 +183,14 @@ cv2.destroyAllWindows()
 ```
 
 ## 핵심 코드 설명
+
+    • h, w = img.shape[:2] : 입력 이미지의 높이와 너비 추출
+    • center = (w // 2, h // 2) : 회전 기준이 될 이미지 중심 좌표 계산
+    • M = cv2.getRotationMatrix2D(center, 30, 0.8) : 중심 기준 30도 회전과 0.8배 스케일을 위한 Affine 변환 행렬 생성
+    • M[0, 2] += 80 : x축 방향으로 +80 픽셀 평행이동
+    • M[1, 2] += -40 : y축 방향으로 -40 픽셀 평행이동
+    • result = cv2.warpAffine(img, M, (w, h)) : 계산한 Affine 변환 행렬을 이용해 이미지 변환 수행
+
 
 
 ## 실행결과
@@ -411,5 +424,16 @@ cv2.destroyAllWindows()
 
 ## 핵심 코드 설명
 
+    • left_gray = cv2.cvtColor(left_color, cv2.COLOR_BGR2GRAY) : 왼쪽 컬러 이미지를 disparity 계산을 위해 그레이스케일 이미지로 변환
+    • right_gray = cv2.cvtColor(right_color, cv2.COLOR_BGR2GRAY) : 오른쪽 컬러 이미지를 그레이스케일 이미지로 변환
+    • stereo = cv2.StereoBM_create(numDisparities=16 * 6, blockSize=15) : Stereo Block Matching 알고리즘 객체 생성
+    • disparity = stereo.compute(left_gray, right_gray).astype(np.float32) / 16.0 : 좌우 이미지의 disparity map 계산 (정수형 disparity 값을 실수형으로 변환 후 16으로 나눔)
+    • depth_map[valid_mask] = (f * B) / disparity[valid_mask] : Depth 공식 𝑍=𝑓𝐵/𝑑를 이용해 실제 거리 계산
+    • roi_disp = disparity[y:y+h, x:x+w] : ROI 영역의 disparity 값 추출
+    • mean_disp = np.mean(roi_disp[roi_valid]) : ROI 내부 유효 disparity 평균 계산
+    • mean_depth = np.mean(roi_depth[roi_valid]) : ROI 내부 유효 depth 평균 계산
+    • disparity_color = cv2.applyColorMap(disp_vis, cv2.COLORMAP_JET) : disparity map을 컬러맵으로 시각화
+    • depth_color = cv2.applyColorMap(depth_vis, cv2.COLORMAP_JET) : depth map을 컬러맵으로 시각화
+
 ## 실행결과
-<img width="1795" height="797" alt="image" src="https://github.com/user-attachments/assets/2f8c8e84-8320-4c50-925a-3df1093173c1" />
+<img width="889" height="744" alt="image" src="https://github.com/user-attachments/assets/a5b2682c-900c-44b1-9fb9-38b1c43646e6" />
