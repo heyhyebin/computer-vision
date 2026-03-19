@@ -15,21 +15,21 @@ line_img = img.copy()
 # 2. 그레이스케일 변환
 gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
-# Canny 전에 블러 추가 (노이즈 제거)
+# 노이즈 제거
 gray = cv.GaussianBlur(gray, (5, 5), 0)
 
 # 3. 캐니 에지 검출
 # threshold1: 낮은 임계값, threshold2: 높은 임계값
-edges = cv.Canny(gray, 100, 200)
+edges = cv.Canny(gray, 50, 150)
 
 # 4. 허프 변환으로 직선 검출
 lines = cv.HoughLinesP(
     edges,                 # 입력 에지 이미지
     rho=1,                 # 거리 해상도 (픽셀 단위)
     theta=np.pi / 180,     # 각도 해상도 (라디안)
-    threshold=150,         # 직선으로 인정할 최소 투표 수
-    minLineLength=70,      # 최소 직선 길이
-    maxLineGap=15          # 직선 사이 최대 간격
+    threshold=120,         # 직선으로 인정할 최소 투표 수
+    minLineLength=60,      # 최소 직선 길이
+    maxLineGap=10          # 직선 사이 최대 간격
 )
 
 # 5. 검출된 직선을 원본 이미지에 그리기
