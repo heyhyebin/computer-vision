@@ -129,7 +129,7 @@ gray = cv.GaussianBlur(gray, (5, 5), 0)
 
 # 3. 캐니 에지 검출
 # threshold1: 낮은 임계값, threshold2: 높은 임계값
-edges = cv.Canny(gray, 50, 150)
+edges = cv.Canny(gray, 100, 200)
 
 # 4. 허프 변환으로 직선 검출
 lines = cv.HoughLinesP(
@@ -171,7 +171,7 @@ plt.show()
 ```
 
 ### 핵심 코드
-    • edges = cv.Canny(gray, 50, 150)
+    • edges = cv.Canny(gray, 100, 200)
       이미지에서 경계를 검출하여 에지 맵을 생성하는 코드
     
     • lines = cv.HoughLinesP(edges, 1, np.pi/180, 120, minLineLength=60, maxLineGap=10)
@@ -181,7 +181,8 @@ plt.show()
       검출된 직선을 원본 이미지 위에 시각적으로 표시하는 코드
 
 ### 실행결과
-<img width="2404" height="1324" alt="image" src="https://github.com/user-attachments/assets/0d0e3fa6-aa44-4690-ac7d-f20866c500bd" />
+<img width="2404" height="1324" alt="image" src="https://github.com/user-attachments/assets/758fb8cc-b0d7-4788-9b04-c66148270fc6" />
+
 
 
 
