@@ -182,6 +182,7 @@ plt.show()
 
 ### 실행결과
 <img width="2404" height="1324" alt="image" src="https://github.com/user-attachments/assets/dc6e2e7c-965f-4c5a-8ebc-6869eaa582ab" />
+<img width="2404" height="1324" alt="image" src="https://github.com/user-attachments/assets/4454ba93-4720-4f1b-89bf-3a2b00133454" />
 
 
 
