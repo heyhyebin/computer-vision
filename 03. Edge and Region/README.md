@@ -124,21 +124,21 @@ line_img = img.copy()
 # 2. 그레이스케일 변환
 gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
-# Canny 전에 블러 추가 (노이즈 제거)
+# 노이즈 제거
 gray = cv.GaussianBlur(gray, (5, 5), 0)
 
 # 3. 캐니 에지 검출
 # threshold1: 낮은 임계값, threshold2: 높은 임계값
-edges = cv.Canny(gray, 100, 200)
+edges = cv.Canny(gray, 50, 150)
 
 # 4. 허프 변환으로 직선 검출
 lines = cv.HoughLinesP(
     edges,                 # 입력 에지 이미지
     rho=1,                 # 거리 해상도 (픽셀 단위)
     theta=np.pi / 180,     # 각도 해상도 (라디안)
-    threshold=150,         # 직선으로 인정할 최소 투표 수
-    minLineLength=70,      # 최소 직선 길이
-    maxLineGap=15          # 직선 사이 최대 간격
+    threshold=120,         # 직선으로 인정할 최소 투표 수
+    minLineLength=60,      # 최소 직선 길이
+    maxLineGap=10          # 직선 사이 최대 간격
 )
 
 # 5. 검출된 직선을 원본 이미지에 그리기
@@ -171,18 +171,17 @@ plt.show()
 ```
 
 ### 핵심 코드
-    • edges = cv.Canny(gray, 100, 200)
+    • edges = cv.Canny(gray, 50, 150)
       이미지에서 경계를 검출하여 에지 맵을 생성하는 코드
     
-    • lines = cv.HoughLinesP(edges, 1, np.pi/180, 150, minLineLength=70, maxLineGap=15)
+    • lines = cv.HoughLinesP(edges, 1, np.pi/180, 120, minLineLength=60, maxLineGap=10)
       에지 이미지에서 직선 성분을 검출하는 코드
     
     • cv.line(line_img, (x1, y1), (x2, y2), (0, 0, 255), 2)
       검출된 직선을 원본 이미지 위에 시각적으로 표시하는 코드
 
 ### 실행결과
-<img width="2404" height="1324" alt="image" src="https://github.com/user-attachments/assets/dc6e2e7c-965f-4c5a-8ebc-6869eaa582ab" />
-<img width="2404" height="1324" alt="image" src="https://github.com/user-attachments/assets/4454ba93-4720-4f1b-89bf-3a2b00133454" />
+<img width="2404" height="1324" alt="image" src="https://github.com/user-attachments/assets/0d0e3fa6-aa44-4690-ac7d-f20866c500bd" />
 
 
 
