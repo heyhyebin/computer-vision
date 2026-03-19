@@ -20,7 +20,7 @@ gray = cv.GaussianBlur(gray, (5, 5), 0)
 
 # 3. 캐니 에지 검출
 # threshold1: 낮은 임계값, threshold2: 높은 임계값
-edges = cv.Canny(gray, 50, 150)
+edges = cv.Canny(gray, 100, 200)
 
 # 4. 허프 변환으로 직선 검출
 lines = cv.HoughLinesP(
