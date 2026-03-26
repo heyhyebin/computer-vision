@@ -88,7 +88,7 @@ plt.show()
 <img width="2804" height="1324" alt="image" src="https://github.com/user-attachments/assets/eae80c24-927a-40f6-bbc5-e5558f2a36d2" />
 
 
-## 02. SIFT를 이용한 두 영상 간 특징점 매
+## 02. SIFT를 이용한 두 영상 간 특징점 매칭
 ### 문제
 #### 설명
   • 두 개의 이미지(mot_color70.jpg, mot_color80.jpg)를 입력받아 SIFT 특징점 기반으로 매칭을 수행하고 결과를 시각화     
