@@ -16,42 +16,34 @@ gray2 = cv.cvtColor(img2, cv.COLOR_BGR2GRAY)
 # 3. SIFT 객체 생성
 sift = cv.SIFT_create()
 
-# 4. 특징점 검출 및 기술자(descriptor) 계산
+# 4. 특징점 검출 및 descriptor 계산
+# 두 이미지에서 특징점(keypoints)과 특징 벡터(descriptors) 추출
 kp1, des1 = sift.detectAndCompute(gray1, None)
 kp2, des2 = sift.detectAndCompute(gray2, None)
 
-# 5. FLANN 기반 매처 설정
-# SIFT는 float descriptor이므로 KD-Tree 사용
-index_params = dict(algorithm=1, trees=5)   # algorithm=1 : KDTree
-search_params = dict(checks=50)
+# 5. BFMatcher 생성 및 매칭
+# crossCheck=True → 서로 가장 가까운 매칭만 인정하여 정확도 향상
+bf = cv.BFMatcher(cv.NORM_L2, crossCheck=True)
+matches = bf.match(des1, des2)
 
-flann = cv.FlannBasedMatcher(index_params, search_params)
+# 6. 거리 기준으로 정렬
+# 매칭 거리(distance)가 작은 순서대로 정렬 (좋은 매칭이 앞쪽)
+matches = sorted(matches, key=lambda x: x.distance)
 
-# 6. 각 특징점마다 최근접 이웃 2개 찾기
-matches = flann.knnMatch(des1, des2, k=2)
-
-# 7. ratio test 적용
-# 첫 번째 매칭 거리가 두 번째보다 충분히 작을 때만 좋은 매칭으로 인정
-# 잘못된 매칭을 줄여 정확도를 높임
-good_matches = []
-for m, n in matches:
-    if m.distance < 0.7 * n.distance:
-        good_matches.append(m)
-
-# 8. 좋은 매칭점만 시각화
+# 7. 상위 매칭점만 시각화
 matched_img = cv.drawMatches(
     img1, kp1,
     img2, kp2,
-    good_matches, None,
-    flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS    # 매칭되지 않은 특징점은 그리지 않고, 연결된 매칭점만 표시
+    matches[:50],   # 상위 50개만 표시
+    None,
+    flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS    # 매칭되지 않은 특징점은 제외하고, 연결된 매칭만 표시
 )
 
-# 9. OpenCV는 BGR이므로 RGB로 변환
+# 8. BGR -> RGB 변환 후 출력
 matched_img_rgb = cv.cvtColor(matched_img, cv.COLOR_BGR2RGB)
 
-# 10. 결과 출력
 plt.figure(figsize=(16, 8))
 plt.imshow(matched_img_rgb)
-plt.title(f'FLANN + KNN Match + Ratio Test ({len(good_matches)} good matches)')
+plt.title(f'SIFT Feature Matching ({len(matches)} matches, showing top 50)')
 plt.axis('off')
 plt.show()
