@@ -81,7 +81,7 @@ plt.show()
     • keypoints, descriptors = sift.detectAndCompute(gray, None)
       특징점과 특징 벡터를 추출하는 핵심 코드
     
-    • cv.drawKeypoints(...)
+    • cv.drawKeypoints( img, keypoints, None, flags=cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS )
       특징점의 위치, 크기, 방향을 시각화하는 코드
 
 ### 실행 결과
@@ -180,7 +180,7 @@ plt.show()
     • if m.distance < 0.7 * n.distance:
       ratio test를 통해 정확한 매칭만 선택하는 코드
     
-    • cv.drawMatches(...)
+    • cv.drawMatches( img1, kp1, img2, kp2, good_matches, None, flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS )
       최종 매칭 결과를 시각화하는 코드
 
 ### 실행 결과
@@ -306,10 +306,10 @@ plt.show()
     • src_pts / dst_pts 생성
       대응되는 특징점 좌표를 추출하는 코드
     
-    • H, mask = cv.findHomography(...)
+    • H, mask = cv.findHomography( src_pts, dst_pts, cv.RANSAC, 5.0 )
       RANSAC을 이용해 호모그래피(변환 행렬)를 계산하는 코드
     
-    • cv.warpPerspective(...)
+    • cv.warpPerspective( img2, H, (w1 + w2, max(h1, h2)) )
       계산된 변환 행렬을 이용해 이미지 정합을 수행하는 코드
 
 ### 실행 결과
