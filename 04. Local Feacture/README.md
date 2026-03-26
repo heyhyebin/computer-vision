@@ -106,7 +106,7 @@ plt.show()
   • knnMatch()와 DMatch 객체를 활용하여 최근접 이웃 거리 비율을 적용하면 매칭 정확도를 높일 수 있음              
 
 ### 코드
-02_sift_flann_matching.py
+02_sift_bf_matching.py
 ```python
 import cv2 as cv
 import matplotlib.pyplot as plt
