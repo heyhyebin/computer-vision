@@ -18,9 +18,9 @@ model = models.Sequential([
 
 # 4. 모델 컴파일
 model.compile(
-    optimizer='adam',
-    loss='sparse_categorical_crossentropy',
-    metrics=['accuracy']
+    optimizer='adam',       # 최적화 알고리즘
+    loss='sparse_categorical_crossentropy', # 손실 함수
+    metrics=['accuracy']                    # 평가 지표
 )
 
 # 5. 모델 학습
