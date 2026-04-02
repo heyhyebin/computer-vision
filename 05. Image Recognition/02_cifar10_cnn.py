@@ -13,22 +13,24 @@ class_names = [
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
 
 # 2. 데이터 전처리
+# 픽셀 값을 0~255 -> 0~1 범위로 정규화
 x_train = x_train / 255.0
 x_test = x_test / 255.0
 
 # 3. CNN 모델 구성
 model = models.Sequential([
+    # 합성곱 층: 이미지 특징 추출
     layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
-    layers.MaxPooling2D((2, 2)),
+    layers.MaxPooling2D((2, 2)),    # 특징 축소
 
     layers.Conv2D(64, (3, 3), activation='relu'),
     layers.MaxPooling2D((2, 2)),
 
     layers.Conv2D(64, (3, 3), activation='relu'),
 
-    layers.Flatten(),
-    layers.Dense(64, activation='relu'),
-    layers.Dense(10, activation='softmax')
+    layers.Flatten(),   # 1차원으로 변환
+    layers.Dense(64, activation='relu'),    # 완전연결층
+    layers.Dense(10, activation='softmax')  # 10개 클래스 분류
 ])
 
 # 4. 모델 컴파일
@@ -48,16 +50,18 @@ print(f"\n테스트 정확도: {test_acc:.4f}")
 # 7. dog.jpg 이미지 예측 함수
 def predict_image(image_path):
     img = Image.open(image_path).convert('RGB')
-    img = img.resize((32, 32))  # CIFAR-10 크기에 맞춤
-    img_array = np.array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)  # 배치 차원 추가
+    img = img.resize((32, 32))          # CIFAR-10 크기에 맞춤
+    img_array = np.array(img) / 255.0   # numpy 배열로 변환 후 정규화
+    img_array = np.expand_dims(img_array, axis=0)  # 모델 입력 형태로 변환 (배치 차원 추가)
 
     prediction = model.predict(img_array)
+
+    # 가장 높은 확률을 가진 클래스 선택
     predicted_class = np.argmax(prediction[0])
     confidence = np.max(prediction[0])
 
     print(f"예측 결과: {class_names[predicted_class]}")
     print(f"신뢰도: {confidence:.4f}")
 
-# 예시 실행
+# 8. dog.jpg 이미지 예측 실행
 predict_image("dog.jpg")
