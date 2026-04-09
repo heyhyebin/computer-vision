@@ -19,7 +19,7 @@
 
 
 ### 코드
-
+01_dynamic_vision_sort_tracking.py
 ```python
 import cv2
 import numpy as np
@@ -343,30 +343,27 @@ if __name__ == "__main__":
 ```
 
 ### 핵심코드
-1. YOLO 모델 로드
-net = cv2.dnn.readNetFromDarknet(CFG_PATH, WEIGHTS_PATH)
-YOLOv3 모델을 불러오는 코드
-객체 검출의 시작
-2. 프레임 전처리 후 YOLO 추론
-blob = cv2.dnn.blobFromImage(frame, 1/255.0, (INPUT_SIZE, INPUT_SIZE), swapRB=True)
-net.setInput(blob)
-outputs = net.forward(out_layers)
-현재 프레임을 YOLO 입력 형식으로 바꾸고
-객체를 검출하는 가장 핵심 부분
-3. SORT 추적기 생성
-tracker = Sort()
-다중 객체 추적기 초기화
-검출된 객체들에 고유 ID를 붙여 계속 추적함
-4. 검출 결과를 tracker에 전달
-tracks = tracker.update(dets)
-현재 프레임 검출 결과와 이전 프레임 추적 결과를 연결
-같은 객체라면 같은 ID 유지
-5. 결과 시각화
-cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-cv2.putText(frame, f"ID: {track_id}", (x1, y1 - 10),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-객체 위치를 박스로 표시
-객체마다 고유 ID를 함께 출력
+    • net = cv2.dnn.readNetFromDarknet(CFG_PATH, WEIGHTS_PATH)
+    YOLOv3 모델을 불러오는 코드
+    
+    • blob = cv2.dnn.blobFromImage(frame, 1/255.0, (INPUT_SIZE, INPUT_SIZE), swapRB=True)
+    현재 프레임을 YOLO 입력 형식으로 전처리하는 코드
+    
+    • outputs = net.forward(out_layers)
+    YOLO를 이용해 객체를 검출하는 핵심 코드
+    
+    • tracker = Sort()
+    SORT 다중 객체 추적기를 초기화하는 코드
+    
+    • tracks = tracker.update(dets)
+    현재 프레임의 검출 결과와 이전 추적 결과를 연결해 같은 객체의 ID를 유지하는 코드
+    
+    • cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    검출·추적된 객체의 위치를 경계 상자로 표시하는 코드
+    
+    • cv2.putText(frame, f"ID: {track_id}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+    객체마다 고유 ID를 화면에 출력하는 코드
+
 ### 실행결과
 <img width="642" height="392" alt="image" src="https://github.com/user-attachments/assets/9bf8119b-8a2c-404a-aadb-7e01b179c0d4" />
 
@@ -394,9 +391,121 @@ cv2.putText(frame, f"ID: {track_id}", (x1, y1 - 10),
 * 랜드마크 좌표는 정규화되어 있으므로, 이미지 크기에 맞게 변환이 필요합니다.
 
 ### 코드
+02_dynamic_vision_facemesh.py
+```python
+import cv2
+import mediapipe as mp
+
+# 1. 라이브러리 import 확인
+print("1. import 성공")
+
+
+# 2. Mediapipe FaceMesh 모듈 가져오기
+mp_face_mesh = mp.solutions.face_mesh
+
+# 3. FaceMesh 얼굴 랜드마크 검출기 생성
+# static_image_mode=False : 실시간 영상 처리 모드
+# max_num_faces=1 : 최대 1개의 얼굴만 검출
+# refine_landmarks=True : 눈, 입술 등 세부 랜드마크 정교화
+# min_detection_confidence : 얼굴 검출 최소 신뢰도
+# min_tracking_confidence : 추적 최소 신뢰도
+face_mesh = mp_face_mesh.FaceMesh(
+    static_image_mode=False,
+    max_num_faces=1,
+    refine_landmarks=True,
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5
+)
+
+print("2. FaceMesh 생성 성공")
+
+
+# 4. OpenCV로 웹캠 객체 생성
+cap = cv2.VideoCapture(0)
+print("3. 웹캠 객체 생성")
+
+
+# 5. 웹캠이 정상적으로 열렸는지 확인
+if not cap.isOpened():
+    print("웹캠을 열 수 없습니다.")
+    exit()
+
+print("4. 웹캠 열기 성공")
+
+
+# 6. 실시간 영상 프레임 반복 처리
+while True:
+    # 6-1. 웹캠에서 한 프레임 읽기
+    ret, frame = cap.read()
+    print("5. 프레임 읽기 시도")
+
+    # 6-2. 프레임 읽기 실패 시 종료
+    if not ret:
+        print("프레임을 읽을 수 없습니다.")
+        break
+
+    # 6-3. 좌우 반전하여 거울처럼 보이게 설정
+    frame = cv2.flip(frame, 1)
+
+    # 6-4. OpenCV의 BGR 영상을 Mediapipe용 RGB로 변환
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    # 6-5. 얼굴 랜드마크 검출 수행
+    results = face_mesh.process(rgb)
+
+    # 6-6. 얼굴이 검출되면 랜드마크를 점으로 표시
+    if results.multi_face_landmarks:
+        h, w, _ = frame.shape
+
+        # 검출된 각 얼굴에 대해 반복
+        for face_landmarks in results.multi_face_landmarks:
+            # 얼굴의 468개 랜드마크 반복
+            for lm in face_landmarks.landmark:
+                # 정규화된 좌표를 실제 이미지 좌표로 변환
+                x = int(lm.x * w)
+                y = int(lm.y * h)
+
+                # 랜드마크를 초록색 점으로 시각화
+                cv2.circle(frame, (x, y), 1, (0, 255, 0), -1)
+
+    # 7. 결과 영상 출력
+    cv2.imshow("Face Mesh Landmarks", frame)
+
+    # 8. ESC 키를 누르면 종료
+    if cv2.waitKey(1) == 27:
+        break
+
+
+# 9. 자원 해제 및 창 닫기
+cap.release()
+cv2.destroyAllWindows()
+```
 
 ### 핵심코드
+    • mp_face_mesh = mp.solutions.face_mesh
+    Mediapipe의 FaceMesh 모듈을 불러오는 코드
+    
+    • face_mesh = mp_face_mesh.FaceMesh(...)
+    얼굴 랜드마크 검출기를 생성하는 코드
+    
+    • cap = cv2.VideoCapture(0)
+    웹캠으로부터 실시간 영상을 입력받는 코드
+    
+    • results = face_mesh.process(rgb)
+    현재 프레임에서 얼굴 랜드마크를 검출하는 핵심 코드
+    
+    • x = int(lm.x * w), y = int(lm.y * h)
+    정규화된 랜드마크 좌표를 실제 이미지 좌표로 변환하는 코드
+    
+    • cv2.circle(frame, (x, y), 1, (0, 255, 0), -1)
+    검출된 랜드마크를 영상 위에 점으로 표시하는 코드
+    
+    • if cv2.waitKey(1) == 27:
+    ESC 키를 눌렀을 때 프로그램을 종료하는 코드
 
 ### 실행결과
+<img width="1284" height="1024" alt="스크린샷 2026-04-09 140942" src="https://github.com/user-attachments/assets/8596381b-311d-4e38-86d3-37d8d556a32b" />
+
+
 
 
