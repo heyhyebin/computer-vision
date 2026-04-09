@@ -499,7 +499,8 @@ cv2.destroyAllWindows()
     ESC 키를 눌렀을 때 프로그램을 종료하는 코드
 
 ### 실행결과
-<img width="1284" height="1024" alt="image" src="https://github.com/user-attachments/assets/405c6cde-b24d-4a7c-bee8-52447eae025b" />
+<img width="684" height="914" alt="image" src="https://github.com/user-attachments/assets/3e74d4a6-5d61-4e51-8eff-a6e92b69eb6f" />
+
 
 
 
