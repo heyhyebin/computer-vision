@@ -404,17 +404,12 @@ print("1. import 성공")
 mp_face_mesh = mp.solutions.face_mesh
 
 # 3. FaceMesh 얼굴 랜드마크 검출기 생성
-# static_image_mode=False : 실시간 영상 처리 모드
-# max_num_faces=1 : 최대 1개의 얼굴만 검출
-# refine_landmarks=True : 눈, 입술 등 세부 랜드마크 정교화
-# min_detection_confidence : 얼굴 검출 최소 신뢰도
-# min_tracking_confidence : 추적 최소 신뢰도
 face_mesh = mp_face_mesh.FaceMesh(
-    static_image_mode=False,
-    max_num_faces=1,
-    refine_landmarks=True,
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5
+    static_image_mode=False,         # 실시간 영상 처리 모드
+    max_num_faces=1,                 # 최대 1개의 얼굴만 검출
+    refine_landmarks=True,           # 눈, 입술 등 세부 랜드마크 정교화
+    min_detection_confidence=0.5,    # 얼굴 검출 최소 신뢰도
+    min_tracking_confidence=0.5      # 추적 최소 신뢰도
 )
 
 print("2. FaceMesh 생성 성공")
@@ -485,7 +480,7 @@ cv2.destroyAllWindows()
     • mp_face_mesh = mp.solutions.face_mesh
     Mediapipe의 FaceMesh 모듈을 불러오는 코드
     
-    • face_mesh = mp_face_mesh.FaceMesh(...)
+    • face_mesh = mp_face_mesh.FaceMesh(static_image_mode=False, max_num_faces=1, refine_landmarks=True, min_detection_confidence=0.5, min_tracking_confidence=0.5)
     얼굴 랜드마크 검출기를 생성하는 코드
     
     • cap = cv2.VideoCapture(0)
